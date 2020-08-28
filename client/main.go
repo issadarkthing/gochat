@@ -43,7 +43,8 @@ func main() {
 		}
 
 		client.username = getValue("Username: ")
-		goChat.input.SetLabel(fmt.Sprintf(" %s : ", client.username))
+		label := fmt.Sprintf("[%s] %s :[white] ", client.color, client.username)
+		goChat.input.SetLabel(label)
 		goChat.app.SetRoot(goChat.window, true)
 	})
 

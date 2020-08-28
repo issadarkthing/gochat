@@ -36,6 +36,7 @@ func main() {
 
 	goChat = newGui()
 
+	// for login prompt
 	goChat.login.AddButton("login", func() {
 		getValue := func(label string) string {
 			val := goChat.login.GetFormItemByLabel(label).(*tview.InputField).GetText()
@@ -48,13 +49,14 @@ func main() {
 		goChat.app.SetRoot(goChat.window, true)
 	})
 
-	// websockets
+	// create a connection
 	err := client.connect()
 	if err != nil {
 		panic(err)
 	}
 
 	client.receiveHandler(func(data structure.Message) {
+		// gets current text from textview and simply append it with incoming message
 		currText := goChat.text.GetText(false)
 		message := fmt.Sprintf("[%s]%s[white]: %s", 
 			data.Color, data.Username, data.Message)
@@ -66,12 +68,16 @@ func main() {
 		if key != tcell.KeyEnter {
 			return
 		}
+		// send message if enter was pressed
 		client.send(goChat.input.GetText())
+		// clear the input bar
 		goChat.input.SetText("")
 	})
 
+	// display login prompt first
 	goChat.app.SetRoot(center(goChat.login, 40, 10), true)
 	goChat.app.SetFocus(goChat.login)
+	// main loop goes here
 	if err = goChat.app.Run(); err != nil {
 		panic(err)
 	}

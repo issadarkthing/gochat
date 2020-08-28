@@ -16,7 +16,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -57,7 +56,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	defer ws.Close()
 	clients[ws] = true
 
-	fmt.Println("One connection created")
+	log.Println("One connection created")
+	log.Printf("Total number of connections %d\n", len(clients))
 	for {
 		var msg structure.Message
 
@@ -66,6 +66,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			// connection closed
 			// remove client
 			delete(clients, ws)
+			log.Println("One connection closed")
+			log.Printf("Total number of connections %d\n", len(clients))
 			break
 		}
 
@@ -80,7 +82,6 @@ func handleMessages() {
 		for client := range clients {
 			err := client.WriteJSON(msg)
 			if err != nil {
-				client.Close()
 				delete(clients, client)
 			}
 		}

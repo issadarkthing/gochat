@@ -22,7 +22,7 @@ import (
 	"github.com/issadarkthing/gochat/structure"
 )
 
-
+// Struct to hold data about our client and to abstract the websocket
 type Client struct {
 	username   string
 	url        string
@@ -30,6 +30,7 @@ type Client struct {
 	connection *websocket.Conn
 }
 
+// Connects client to the server
 func (c *Client) connect() error {
 	con, _, err := websocket.DefaultDialer.Dial(c.url, nil)
 	if err != nil {
@@ -40,6 +41,7 @@ func (c *Client) connect() error {
 	return nil
 }
 
+// Send message to the server
 func (c Client) send(message string) error {
 	placeHolder := `
 {
@@ -51,6 +53,8 @@ func (c Client) send(message string) error {
 	return c.connection.WriteMessage(websocket.TextMessage, []byte(data))
 }
 
+// Handles the incoming data and unmarshalles (if i spelt it correctly) the
+// json into Message struct
 func (c Client) receiveHandler(handler func(data structure.Message)) {
 	go func() {
 		for {

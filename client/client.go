@@ -16,6 +16,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/gorilla/websocket"
@@ -25,6 +26,7 @@ import (
 // Struct to hold data about our client and to abstract the websocket
 type Client struct {
 	username   string
+	passphrase string
 	url        string
 	color      string
 	connection *websocket.Conn
@@ -46,21 +48,36 @@ func (c Client) send(message string) error {
 	placeHolder := `
 {
 	"username": "%s",
-	"color": "%s",
-	"message": "%s"
+	"color":    "%s",
+	"message":  "%s"
 }`
 	data := fmt.Sprintf(placeHolder, c.username, c.color, message)
-	return c.connection.WriteMessage(websocket.TextMessage, []byte(data))
+	encrypted := encrypt([]byte(data), hashKey(c.passphrase))
+	return c.connection.WriteMessage(websocket.TextMessage, encrypted)
 }
 
 // Handles the incoming data and unmarshalles (if i spelt it correctly) the
 // json into Message struct
-func (c Client) receiveHandler(handler func(data structure.Message)) {
+// This part is very tricky, make sure the receiveHandler is a pointer receiver,
+// otherwise, it cannot reflect the changes made to the struct. 
+// This is due to the for loop that only receives the copy
+func (c *Client) receiveHandler(handler func(data structure.Message)) {
 	go func() {
 		for {
-			var msg structure.Message
-			c.connection.ReadJSON(&msg)
-			handler(msg)
+
+			var data structure.Message
+			_, msg, err := c.connection.ReadMessage()
+			if err != nil {
+				panic(err)
+			}
+
+			decrypted, err := decrypt(msg, hashKey(c.passphrase))
+			if err != nil {
+				continue
+			}
+
+			json.Unmarshal(decrypted, &data)
+			handler(data)
 		}
 	}()
 }

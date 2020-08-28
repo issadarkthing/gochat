@@ -18,6 +18,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/gdamore/tcell"
@@ -49,6 +50,7 @@ func main() {
 		}
 
 		client.username = getValue("Username: ")
+		client.passphrase = getValue("Passphrase: ")
 		label := fmt.Sprintf("[%s] %s :[white] ", client.color, client.username)
 		goChat.input.SetLabel(label)
 		goChat.app.SetRoot(goChat.window, true)
@@ -63,8 +65,14 @@ func main() {
 	client.receiveHandler(func(data structure.Message) {
 		// gets current text from textview and simply append it with incoming message
 		currText := goChat.text.GetText(false)
+
+		if err != nil {
+			return
+		}
+
 		message := fmt.Sprintf("[%s]%s[white]: %s", 
 			data.Color, data.Username, data.Message)
+
 		goChat.text.SetText(currText+message)
 		goChat.app.Draw()
 	})

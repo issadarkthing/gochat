@@ -19,4 +19,5 @@ package structure
 type Message struct {
 	Username string `json:"username"`
 	Message  string `json:"message"`
+	Color    string `json:"color"`
 }

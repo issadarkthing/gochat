@@ -54,8 +54,9 @@ func main() {
 	}
 
 	client.receiveHandler(func(data structure.Message) {
-		currText := goChat.text.GetText(true)
-		message := fmt.Sprintf("%s: %s\n", data.Username, data.Message)
+		currText := goChat.text.GetText(false)
+		message := fmt.Sprintf("[%s]%s[white]: %s", 
+			data.Color, data.Username, data.Message)
 		goChat.text.SetText(currText+message)
 		goChat.app.Draw()
 	})
@@ -68,7 +69,9 @@ func main() {
 		goChat.input.SetText("")
 	})
 
-	if err := goChat.app.SetRoot(goChat.login, true).Run(); err != nil {
+	goChat.app.SetRoot(center(goChat.login, 40, 10), true)
+	goChat.app.SetFocus(goChat.login)
+	if err = goChat.app.Run(); err != nil {
 		panic(err)
 	}
 }

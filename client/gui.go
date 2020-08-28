@@ -16,6 +16,9 @@
 package main
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 )
@@ -49,7 +52,8 @@ func newGui() Gui {
 func newLoginForm() *tview.Form {
 	form := tview.NewForm()
 	form.
-		AddInputField("Username: ", "", 20, nil, nil)
+		AddInputField("Username: ", "", 20, nil, nil).
+		SetFieldBackgroundColor(tcell.ColorDefault)
 
 	return form
 }
@@ -60,7 +64,8 @@ func createWindow() *tview.Flex {
 }
 
 func newTextPanel() *tview.TextView {
-	text := tview.NewTextView()
+	text := tview.NewTextView().
+		SetDynamicColors(true)
 	text.SetBorder(true)
 	return text
 }
@@ -69,4 +74,28 @@ func newInputField() *tview.InputField {
 	input := tview.NewInputField()
 	input.SetFieldBackgroundColor(tcell.ColorDefault)
 	return input
+}
+
+func center(p tview.Primitive, width, height int) tview.Primitive {
+	return tview.NewFlex().
+		AddItem(nil, 0, 1, false).
+		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(nil, 0, 1, false).
+			AddItem(p, height, 1, true).
+			AddItem(nil, 0, 1, false), width, 1, false).
+		AddItem(nil, 0, 1, false)
+}
+
+func randomColor() string {
+	rand.Seed(time.Now().Unix())
+	colors := []string{
+		"blue",
+		"red",
+		"green",
+		"yellow",
+		"orange",
+		"white",
+	}
+	index := rand.Intn(len(colors))
+	return colors[index]
 }

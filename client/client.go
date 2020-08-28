@@ -26,6 +26,7 @@ import (
 type Client struct {
 	username   string
 	url        string
+	color      string
 	connection *websocket.Conn
 }
 
@@ -34,7 +35,7 @@ func (c *Client) connect() error {
 	if err != nil {
 		return err
 	}
-
+	c.color = randomColor()
 	c.connection = con
 	return nil
 }
@@ -43,9 +44,10 @@ func (c Client) send(message string) error {
 	placeHolder := `
 {
 	"username": "%s",
+	"color": "%s",
 	"message": "%s"
 }`
-	data := fmt.Sprintf(placeHolder, c.username, message)
+	data := fmt.Sprintf(placeHolder, c.username, c.color, message)
 	return c.connection.WriteMessage(websocket.TextMessage, []byte(data))
 }
 

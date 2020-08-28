@@ -17,6 +17,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/gdamore/tcell"
@@ -29,6 +30,10 @@ var (
 )
 
 func main() {
+
+	// very useful for debugging
+	file, err := os.OpenFile("./log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0644)
+	log.SetOutput(file)
 
 	client := Client{
 		url: "ws://localhost:8080/ws",
@@ -50,7 +55,7 @@ func main() {
 	})
 
 	// create a connection
-	err := client.connect()
+	err = client.connect()
 	if err != nil {
 		panic(err)
 	}

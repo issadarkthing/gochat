@@ -53,6 +53,7 @@ func newLoginForm() *tview.Form {
 	form := tview.NewForm()
 	form.
 		AddInputField("Username: ", "", 20, nil, nil).
+		AddInputField("Passphrase: ", "", 20, nil, nil).
 		SetFieldBackgroundColor(tcell.ColorDefault)
 
 	return form
@@ -94,7 +95,6 @@ func randomColor() string {
 		"green",
 		"yellow",
 		"orange",
-		"white",
 	}
 	index := rand.Intn(len(colors))
 	return colors[index]

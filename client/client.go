@@ -25,7 +25,6 @@ import (
 
 type Client struct {
 	username   string
-	email      string
 	url        string
 	connection *websocket.Conn
 }
@@ -41,8 +40,12 @@ func (c *Client) connect() error {
 }
 
 func (c Client) send(message string) error {
-	data := fmt.Sprintf(`{ "username": "%s", "email": "%s", "message": "%s" }`, 
-		c.username, c.email, message)
+	placeHolder := `
+{
+	"username": "%s",
+	"message": "%s"
+}`
+	data := fmt.Sprintf(placeHolder, c.username, message)
 	return c.connection.WriteMessage(websocket.TextMessage, []byte(data))
 }
 

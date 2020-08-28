@@ -49,8 +49,7 @@ func newGui() Gui {
 func newLoginForm() *tview.Form {
 	form := tview.NewForm()
 	form.
-		AddInputField("Username: ", "", 20, nil, nil).
-		AddInputField("Email: ", "", 20, nil, nil)
+		AddInputField("Username: ", "", 20, nil, nil)
 
 	return form
 }

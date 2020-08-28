@@ -43,7 +43,6 @@ func main() {
 		}
 
 		client.username = getValue("Username: ")
-		client.email = getValue("Email: ")
 		goChat.input.SetLabel(fmt.Sprintf(" %s : ", client.username))
 		goChat.app.SetRoot(goChat.window, true)
 	})

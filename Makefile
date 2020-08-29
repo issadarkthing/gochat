@@ -15,5 +15,7 @@ server:
 	@cd ./server; \
 	go build -v -o $(BIN_DIR)/server
 
+clean:
+	rm -rf bin
 
 build: gochat server

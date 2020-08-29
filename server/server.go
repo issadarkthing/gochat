@@ -42,7 +42,7 @@ func main() {
 	go handleMessages()
 
 	log.Println("http server started on "+PORT)
-	err := http.ListenAndServe("localhost:"+PORT, nil)
+	err := http.ListenAndServe(":"+PORT, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

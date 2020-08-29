@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell"
-	"github.com/gorilla/websocket"
 	"github.com/issadarkthing/gochat/structure"
 	"github.com/rivo/tview"
 )

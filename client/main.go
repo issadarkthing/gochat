@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/gdamore/tcell"
+	"github.com/gorilla/websocket"
 	"github.com/issadarkthing/gochat/structure"
 	"github.com/rivo/tview"
 )
@@ -33,7 +34,7 @@ func main() {
 	log.SetOutput(file)
 
 	client := Client{
-		url: "ws://localhost:8080/ws",
+		url: "wss://gochat-app.herokuapp.com/ws",
 	}
 
 	gui := newGui()

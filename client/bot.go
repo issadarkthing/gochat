@@ -15,19 +15,30 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 
 
 type Bot struct {
-	gui  Gui
+	gui    Gui
+	client *Client
 }
 
 
-func (b Bot) messageHandler(command string) {
+func (b Bot) messageHandler(message string) {
+
+	split := strings.Split(message, " ")
+	command := split[0]
+	args := split[1:]
+
 	switch command {
 	case "/help":
 		b.printHelp()
+	case "/username":
+		b.changeUsername(args)
 	}
 }
 
@@ -37,8 +48,7 @@ func (b Bot) printHelp() {
 ┌────────────────────────────────────────────────┐
 │        command               description       │
 ├─────────────────────────┬──────────────────────┤
-│/members                 │ show number of users │
-│/nick       <name>       │ change username      │
+│/username   <name>       │ change username      │
 │/passphrase <passphrase> │ change passphrase    │
 │/help                    │ print help message   │
 │/exit                    │ exit gochat          │
@@ -52,4 +62,31 @@ func (b Bot) print(text string) {
 	currText := b.gui.text.GetText(false)
 	message := fmt.Sprintf("[grey]bot: %s[white]", text)
 	b.gui.text.SetText(currText+message)
+}
+
+func (b Bot) printError(text string) {
+	currText := b.gui.text.GetText(false)
+	message := fmt.Sprintf("[red]bot: ERROR %s[white]", text)
+	b.gui.text.SetText(currText+message)
+}
+
+func (b Bot) changeUsername(args []string) {
+
+	if len(args) == 0 {
+		b.printError("missing new username")
+		return
+	}
+
+	username := args[0]
+
+	if len(username) > 20 {
+		b.printError("username exceeds 20 characters")
+	}
+
+
+	b.client.username = username
+	b.print("Successfully changed to " + username)
+
+	label := fmt.Sprintf("[%s] %s :[white] ", b.client.color, b.client.username)
+	b.gui.input.SetLabel(label)
 }

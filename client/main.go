@@ -37,7 +37,7 @@ func main() {
 	}
 
 	gui := newGui()
-	bot := Bot{gui: gui}
+	bot := Bot{gui: gui, client: &client}
 
 	// for login prompt
 	gui.login.AddButton("login", func() {

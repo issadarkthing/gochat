@@ -26,10 +26,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-var (
-	goChat Gui
-)
-
 func main() {
 
 	// very useful for debugging
@@ -40,20 +36,21 @@ func main() {
 		url: "ws://localhost:8080/ws",
 	}
 
-	goChat = newGui()
+	gui := newGui()
+	bot := Bot{gui: gui}
 
 	// for login prompt
-	goChat.login.AddButton("login", func() {
+	gui.login.AddButton("login", func() {
 		getValue := func(label string) string {
-			val := goChat.login.GetFormItemByLabel(label).(*tview.InputField).GetText()
+			val := gui.login.GetFormItemByLabel(label).(*tview.InputField).GetText()
 			return strings.TrimSpace(val)
 		}
 
 		client.username = getValue("Username: ")
 		client.passphrase = getValue("Passphrase: ")
 		label := fmt.Sprintf("[%s] %s :[white] ", client.color, client.username)
-		goChat.input.SetLabel(label)
-		goChat.app.SetRoot(goChat.window, true)
+		gui.input.SetLabel(label)
+		gui.app.SetRoot(gui.window, true)
 	})
 
 	// create a connection
@@ -64,34 +61,40 @@ func main() {
 
 	client.receiveHandler(func(data structure.Message) {
 		// gets current text from textview and simply append it with incoming message
-		currText := goChat.text.GetText(false)
-
-		if err != nil {
-			return
-		}
+		currText := gui.text.GetText(false)
 
 		message := fmt.Sprintf("[%s]%s[white]: %s", 
 			data.Color, data.Username, data.Message)
 
-		goChat.text.SetText(currText+message)
-		goChat.app.Draw()
+		gui.text.SetText(currText+message)
+		gui.app.Draw()
 	})
 
-	goChat.input.SetDoneFunc(func(key tcell.Key) {
+	gui.input.SetDoneFunc(func(key tcell.Key) {
+
 		if key != tcell.KeyEnter {
 			return
 		}
-		// send message if enter was pressed
-		client.send(goChat.input.GetText())
+
+		text := gui.input.GetText()
+
+		// if it was command
+		if strings.HasPrefix(text, "/") {
+			bot.messageHandler(text)
+		} else {
+			// send message if enter was pressed
+			client.send(text)
+		}
+
 		// clear the input bar
-		goChat.input.SetText("")
+		gui.input.SetText("")
 	})
 
 	// display login prompt first
-	goChat.app.SetRoot(center(goChat.login, 40, 10), true)
-	goChat.app.SetFocus(goChat.login)
+	gui.app.SetRoot(center(gui.login, 40, 10), true)
+	gui.app.SetFocus(gui.login)
 	// main loop goes here
-	if err = goChat.app.Run(); err != nil {
+	if err = gui.app.Run(); err != nil {
 		panic(err)
 	}
 }

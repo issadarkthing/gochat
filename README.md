@@ -22,4 +22,5 @@ $ ./bin/gochat
 ## TODO
 - add encryption
 - add documentations
+
 Any pull requests to improve the repo are welcomed

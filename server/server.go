@@ -18,6 +18,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/websocket"
 )
@@ -29,17 +30,19 @@ var (
 )
 
 
-const (
-	PORT = ":8080"
-)
 
 func main() {
+
+	PORT, ok := os.LookupEnv("PORT")
+	if !ok {
+		PORT = "8080"
+	}
 	
 	http.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
 	log.Println("http server started on "+PORT)
-	err := http.ListenAndServe(PORT, nil)
+	err := http.ListenAndServe("localhost:"+PORT, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
